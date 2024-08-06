@@ -38,8 +38,8 @@
 #define W_TOPICO_PUBLICAR "wnology/666af2949ef4f6ca1472dcc1/state" //esse número no meio do tópico deve ser mudado pelo ID do seu device Wegnology
 #define W_TOPICO_SUBSCREVER "wnology/666af2949ef4f6ca1472dcc1/command" // aqui também
 #define W_BROKER "mqtt://broker.app.wnology.io:1883"
-#define SSID "roteadorisa"
-#define PASSWORD "senha1510"
+#define SSID "Larissa"
+#define PASSWORD "laris2805"
 
 
 #define DESLIGAR_TUDO       saidas&=0b00000000
@@ -72,6 +72,7 @@ uint32_t adcvalor = 0;
 char exibir [40];
 char mensa [40];
 const char *strVENT = "VENT\":"; 
+const char *strLAMP = "LAMP\":";
 const char *subtopico_temp = "{\"data\": {\"Temperatura\": ";
 char * Inform;
 bool ledstatus;
@@ -110,6 +111,7 @@ void fechar()
         tentativas--;
     }
 }
+
 void erro ()
 {
     lcd595_clear();
@@ -131,24 +133,34 @@ void restaura()
 //-----------------------------------------------------------------------------------------------------------------------
 void mensagem(esp_mqtt_client_handle_t cliente) 
 {
-   if(strstr(Inform, strVENT))
+    if(strstr(Inform, strVENT))
+    {
+        if(strstr(Inform, "true"))
         {
-             if(strstr(Inform, "true"))
-             {
-                saidas = saidas | 0b00000001;
-                printf ("LIGADO");
-             }
-             else
-             {
-                saidas = saidas & 0b11111110;
-                printf("desligou");
-             }
+            saidas = saidas | 0b00000001;
+            printf ("LIGADO");
         }
-        
-       // gpio_set_level(TEC_SH_LD,ledstatus);//aqui é onde realmente acende ou apaga o LED embarcado
-    
+        else
+        {
+            saidas = saidas & 0b11111110;
+            printf("desligou");
+        }
     }
 
+     if(strstr(Inform, strLAMP))
+    {
+        if(strstr(Inform, "true"))
+        {
+            saidas = saidas | 0b00000010;
+            printf ("LIGADO");
+        }
+        else
+        {
+            saidas = saidas & 0b11111101;
+            printf("desligou");
+        }
+    }
+}
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
